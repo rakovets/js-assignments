@@ -17,8 +17,22 @@
  *  ]
  */
 function createCompassPoints() {
-    throw new Error('Not implemented');
-    var sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    class CompasPoint {
+        constructor(abbreviation, azimuth) {
+            this.abbreviation = abbreviation;
+            this.azimuth = azimuth;
+        }
+    }
+
+    var result = [];
+    var sides = ['N', 'E', 'S', 'W'];
+    var abbreviationTemplates = ["1", "1b2", "112", "12b1", "12", "12b2", "212", "2b1", '1', '1b2', '121', '21b1', '21', '21b2', '221', '2b1'];
+    for (let i = 0; i < 32; i++) {
+        let azimuth = i * 11.25;
+        let abbreviation = abbreviationTemplates[i % 16].replace(/1/g, sides[Math.floor(i / 8)]).replace(/2/g, sides[(Math.floor(i / 8) + 1) % 4]);
+        result.push(new CompasPoint(abbreviation, azimuth));
+    }
+    return result;
 }
 
 
@@ -88,7 +102,28 @@ function* expandBraces(str) {
  *
  */
 function getZigZagMatrix(n) {
-    throw new Error('Not implemented');
+    let array = [];
+    for (let i = 0; i < n; i++) {
+        array[i] = [];
+    }
+    let counter = 0;
+    let flag = true;
+    if (n == 1) {
+        array[0][0] = 0;
+    } else {
+        for (let i = 0; i < 2 * n - 1; i++) {
+            for (let j = 0; j <= i; j++) {
+                if (flag) {
+                    array[i - j][j] = counter;
+                } else {
+                    array[j][i - j] = counter;
+                }
+                counter++;
+            }
+            flag = !flag;
+        }
+    }
+    return array;
 }
 
 
@@ -137,13 +172,26 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-    throw new Error('Not implemented');
+    let result = "";
+    let separator = "";
+    for (let i = 0; i < nums.length; i++) {
+        if(i == 0 || i == nums.length -1 || !(nums[i] == nums[i - 1] + 1 && nums[i] == nums[i + 1] - 1)){
+            if(i == nums.length - 1) separator = "";
+                else
+            if( i > nums.length - 2 ||( nums[i] == nums[i + 1] - 1 && nums[i+1] == nums[i + 2] - 1)) separator = "-";
+                else
+            separator = ",";
+            result += nums[i] + separator;
+        }
+    }
+
+    return result;
 }
 
 module.exports = {
-    createCompassPoints : createCompassPoints,
-    expandBraces : expandBraces,
-    getZigZagMatrix : getZigZagMatrix,
-    canDominoesMakeRow : canDominoesMakeRow,
-    extractRanges : extractRanges
+    createCompassPoints: createCompassPoints,
+    expandBraces: expandBraces,
+    getZigZagMatrix: getZigZagMatrix,
+    canDominoesMakeRow: canDominoesMakeRow,
+    extractRanges: extractRanges
 };
